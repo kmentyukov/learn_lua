@@ -1,3 +1,33 @@
+box.cfg{ listen = '127.0.0.1:3301' }
+box.schema.user.grant('guest', 'super', nil, nil, {if_not_exists = true})
+
+format = {{'user_id', 'unsigned'},
+          {'user_name', 'string'},
+          {'in_game', 'boolean'},
+          {'secret_number', 'number'},
+          {'attempts', 'number'},
+          {'total_games', 'number'},
+          {'total_score', 'number'},
+          {'win_num', 'number'},
+          {'lose_num', 'number'}
+        }
+
+box.schema.create_space('player', {format = format})
+
+function next_id()
+    local id = #box.space.player
+    if id == nil then
+        return 1
+    else
+        return id + 1
+    end
+end
+
+function create_user(user_name)
+    local user_id = next_id()
+    box.space.player:insert(user_id, user_name, 0, 0, 0, 0)
+end
+
 local rounds = 3
 local score = 0
 local reward = 20
@@ -18,6 +48,10 @@ function is_num(step)
 end
 
 print('Давай сыграем в "Угадай число". Всего будет ' .. rounds .. ' раунда. Введи начало и конец диапазона чисел:')
+print('Введи свое имя: ')
+local user_name = io.read()
+create_user(user_name)
+
 
 local start = is_num(steps[1])
 
@@ -66,3 +100,6 @@ for round = 1, rounds do
     end
 end
 print('Твой счет = ' .. score)
+
+require 'console'.start()
+os.exit()
