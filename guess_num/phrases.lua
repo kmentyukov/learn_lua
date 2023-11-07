@@ -1,0 +1,45 @@
+local PHRASES = {
+    en = {
+        game_start = 'Let\'s play "Guess the number". There will be %s  rounds in total. Enter the beginning and end of the range of numbers:',
+        name_enter = 'Enter your name: ',
+        greeting = 'Hello, %s! Welcome back!',
+        welcome = 'Welcome, %s!',
+        begin = 'Beginning of range: ',
+        finish = 'End of range: ',
+        num_enter = 'Enter a number: ',
+        round_start = 'Round %s.',
+        round_start_attempts = 'The number is guessed, the number of attempts = %s',
+        guess_num = 'You guessed right!',
+        round_end = 'There is %s attempts left',
+        you_lose = 'You lose :(',
+        more_num = 'The hidden number is greater',
+        less_num = 'The hidden number is less',
+        warning_number = 'You need to enter a number, try again',
+        warning_end_more_start = 'The end of the range must be larger, than the beginning',
+        warning_range_wide = 'You need a wider range to play',
+        warning_connect = 'Something went wrong, try again later'
+    },
+    ru = {
+        select_lang = 'Enter the number | Введи число: ',
+        game_start = 'Давай сыграем в "Угадай число". Количество раундов: %s. Введи начало и конец диапазона чисел: ',
+        name_enter = 'Введи свое имя: ',
+        greeting = 'Привет, %s! С возвращением!',
+        welcome = 'Добро пожаловать, %s!',
+        begin = 'Начало диапазона: ',
+        finish = 'Конец дипазона: ',
+        num_enter = 'Введите число: ',
+        round_start = 'Раунд %s.',
+        round_start_attempts = 'Число загадано, количество попыток = %s',
+        guess_num = 'Ты угадал!',
+        round_end = 'Осталось %s попыток',
+        you_lose = 'Ты проиграл :(',
+        more_num = 'Загаданное число больше',
+        less_num = 'Загаданное число меньше',
+        warning_number = 'Нужно ввести число, попробуй еще раз',
+        warning_end_more_start = 'Конец диапазона должен быть больше начала',
+        warning_range_wide = 'Для игры нужен диапазон пошире',
+        warning_connect = 'Что-то пошло не так, попробуйте позже',
+    }
+}
+
+return PHRASES

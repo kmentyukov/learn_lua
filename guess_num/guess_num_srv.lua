@@ -40,17 +40,19 @@ function game_setup(start, fin)
 end
 
 function set_secret_num(user, start, fin)
-    secret_num = math.random(start, fin)
+    local secret_num = math.random(start, fin)
     box.space.player:update(user, {
         {'=', 'secret_num', secret_num}
     })
 end
 
-function is_guess(user, num)
-    local s_num = box.space.player:get{user}['secret_num']
-    if num > s_num then
-        return true
+function is_match(user, num)
+    local s_num = box.space.player:get({user})['secret_num']
+    if num == s_num then
+        return 10
+    elseif num > s_num then
+        return 20
     elseif num < s_num then
-        return false
+        return 30
     end
 end
