@@ -1,3 +1,8 @@
+local uuid = require('uuid')
+
+local format = require('format')
+local phrases = require('phrases')
+
 box.cfg{
     listen = '127.0.0.1:3301'
 }
@@ -5,13 +10,12 @@ box.cfg{
 box.schema.user.grant('guest', 'super', nil, nil, {if_not_exists = true})
 
 box.schema.space.create('player', {
-    format = {
-        {name = 'user_name', type = 'string'},
-        {name = 'total_games', type = 'integer'},
-        {name = 'total_score', type = 'integer'},
-        {name = 'win_num', type = 'integer'},
-        {name = 'lose_num', type = 'integer'}
-    },
+    format = format['player_format'],
+    if_not_exists = true
+})
+
+box.schema.space.create('game', {
+    format = format['game_format'],
     if_not_exists = true
 })
 
@@ -20,11 +24,15 @@ box.space.player:create_index('pri', {
     if_not_exists = true
 })
 
+box.space.game:create_index('pri', {
+    parts = {'id'},
+    if_not_exists = true
+})
+
 local DEFAULT_ROUNDS = 3
 local DEFAULT_REWARD = 20
 local DEFAULT_FINE = 20
 
-local phrases = require('phrases')
 local lang = 'ru'
 local attempts
 local start
@@ -32,6 +40,13 @@ local fin
 
 local function create_user(user)
     box.space.player:insert({user, 0, 0, 0, 0})
+end
+
+local function create_game(user)
+    local id = uuid():str()
+    local datetime = os.date()
+    box.space.game:insert({id, user, datetime, 0, 0})
+    return id
 end
 
 local function gen_msg(phrase, key)
@@ -100,6 +115,7 @@ local function start_game()
 end
 
 local function game(user)
+    local game_id = create_game(user)
     local score = 0
     for round = 1, DEFAULT_ROUNDS do
         local secret_num = math.random(start, fin)
@@ -139,8 +155,12 @@ local function game(user)
             {'+', 'win_num', 1}
         })
     end
+    box.space.game:update(game_id, {
+        {'=', 'score', score}
+    })
     
     print(box.space.player:get({user}))
+    print(box.space.game:get({game_id}))
 end
 
 lang_select()

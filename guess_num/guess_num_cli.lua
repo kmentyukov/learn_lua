@@ -82,16 +82,17 @@ local function start_game()
 end
 
 local function game(user)
+    local game_id = conn:call('create_game', {user})
     local score = 0
     for round = 1, rounds do
-        conn:call('set_secret_num', {user, start, fin})
+        conn:call('set_secret_num', {game_id, start, fin})
         print(gen_msg('round_start', round), gen_msg('round_start_attempts', attempts))
         local attempt = attempts
         local flag = false
         while attempt > 0 do
             flag = false
             local n = read_number(gen_msg('num_enter'))
-            local answer = conn:call('is_match', {user, n})
+            local answer = conn:call('is_match', {game_id, n})
             if answer == 30 then
                 print(gen_msg('more_num'))
             elseif answer == 20 then
@@ -122,10 +123,12 @@ local function game(user)
             {'+', 'win_num', 1}
         })
     end
-    conn.space.player:update(user, {
-        {'=', 'secret_num', 0}
+    conn.space.game:update(game_id, {
+        {'=', 'secret_num', 0},
+        {'=', 'score', score}
     })
     print(conn.space.player:get({user}))
+    print(conn.space.game:get({game_id}))
 end
 
 lang_select()
