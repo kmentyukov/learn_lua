@@ -1,0 +1,29 @@
+-- Имеется некоторая конфигурация Tarantool, создан спейс person без полей, с индексом pk. 
+-- Проверить работу следующих операций и предложить своё объяснение результата:
+--         box.space.person.insert({-1, 'John', 'Doe'})
+--         box.space.person:insert({-1, 'Ivan', 'Ivanoff'})
+--         box.space.person:insert(100, 'Egor', 'Egoroff')
+--         box.space.person:insert({100}, 'Egor', 'Egoroff')
+--         box.space.person:insert({100, "Foo", "Fighters", {1,2,3}, {a = 1, b = 2}})
+--         box.space.person.insert(box.space.person, {100, "Foo", "Fighters", {1,2,3}, {a = 1, b = 2}})
+--         box.space.person.insert(box.space.person, {200, "Sukhoy Superjet", "Flight 1", {"Moscow","Saint-Petersburg"}, {hours = 1}})
+--         box.space.person:insert({4})
+--         box.space.person:insert({})
+--         box.space.person:insert()
+
+-- Ошибка синтаксиса: box.space.person:insert
+-- Ошибка типа, по умолчанию первичный индес должен быть unsigned - числа без знака.
+-- Ошибка синтаксиса: error: Tuple/Key must be MsgPack array | box.space.person:insert({100, 'Egor', 'Egoroff'})
+-- Вставка произошла, но вставлен тапл [100], без имен, т.к. в MsgPack входило только {100}
+-- Если уже есть запись с pk = 100: error: Duplicate key exists in unique index "pk" in space "person" with old tuple
+--  Если нет - будет вставлен тапл [100, 'Foo', 'Fighters', [1, 2, 3], {'a': 1, 'b': 2}]
+-- Если нет записи с pk = 100, то будет вставлен тапл [100, 'Foo', 'Fighters', [1, 2, 3], {'a': 1, 'b': 2}]
+--   Вызов функции insert через точечную нотацию с аргументами space_object, tuple
+-- Вставка тапла [200, 'Sukhoy Superjet', 'Flight 1', ['Moscow', 'Saint-Petersburg'], {'hours': 1}]. 
+--   Т.к. спейс жестко не сконфигурирован, то требования предъявляются только к первому полю тапла.
+-- Вставка тапла [4]
+-- error: Tuple field 1 required by space format is missing - тапл должен содержать первое или 
+--   хотя бы одно поле формата unsigned
+-- error: Tuple/Key must be MsgPack array - в аргументах отсутсвует MsgPack
+
+-- Что подразумевается под "Lua-программа + комментарии"? Ответ скорее формата "Lua-файл с комментарием".

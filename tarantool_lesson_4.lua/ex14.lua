@@ -1,0 +1,75 @@
+-- Tarantool уже запущен, сконфигурирован.
+-- Какие настройки можно менять в рабочем режиме? Можно ли уменьшать и увеличивать значения? 
+-- До каких пределов?
+-- Какие настройки нельзя менять в рабочем режиме?
+
+-- Настройки по умолчанию (динамические - '+', нет - '-'):
+--  - background                   = false
+--  + checkpoint_count             = 2
+--  + checkpoint_interval          = 3600
+--  + checkpoint_wal_threshold     = 1000000000000000000
+--  + custom_proc_title            = nil
+--  + feedback_enabled             = true
+--  + feedback_host                = 'https://feedback.tarantool.io'
+--  + feedback_interval            = 3600
+--  - force_recovery               = false
+--  - hot_standby                  = false
+--  - instance_uuid                = nil -- generated automatically
+--  + io_collect_interval          = nil
+--  - iproto_threads               = 1
+--  + listen                       = nil
+--  - log                          = nil
+--  + log_format                   = plain
+--  + log_level                    = 5
+--  - log_nonblock                 = true
+--  - memtx_allocator              = small
+--  - memtx_dir                    = '.'
+--  + memtx_max_tuple_size         = 1024 * 1024
+--  + memtx_memory                 = 256 * 1024 *1024
+--  + memtx_min_tuple_size         = 16
+--  + net_msg_max                  = 768
+--  - pid_file                     = nil
+--  + readahead                    = 16320
+--  + read_only                    = false
+--  - replicaset_uuid              = nil -- generated automatically
+--  + replication                  = nil
+--  + replication_anon             = false
+--  + replication_connect_timeout  = 30
+--  + replication_skip_conflict    = false
+--  + replication_sync_lag         = 10
+--  + replication_sync_timeout     = 300
+--  + replication_timeout          = 1
+--  - slab_alloc_factor            = 1.05
+--  + snap_io_rate_limit           = nil
+--  + sql_cache_size               = 5242880
+--  - strip_core                   = true
+--  + too_long_threshold           = 0.5
+--  - username                     = nil
+--  - vinyl_bloom_fpr              = 0.05
+--  + vinyl_cache                  = 128 * 1024 * 1024
+--  - vinyl_dir                    = '.'
+--  - vinyl_max_tuple_size         = 1024 * 1024* 1024 * 1024
+--  + vinyl_memory                 = 128 * 1024 * 1024
+--  - vinyl_page_size              = 8 * 1024
+--  - vinyl_range_size             = nil
+--  - vinyl_read_threads           = 1
+--  - vinyl_run_count_per_level    = 2
+--  - vinyl_run_size_ratio         = 3.5
+--  + vinyl_timeout                = 60
+--  - vinyl_write_threads          = 4
+--  - wal_dir                      = '.'
+--  - wal_dir_rescan_delay         = 2
+--  - wal_max_size                 = 256 * 1024 * 1024
+--  - wal_mode                     = 'write'
+--  + worker_pool_threads          = 4
+--  - work_dir                     = nil
+
+-- Из динамических количественных параметров есть ограничения:
+-- memtx_memory - можно увеличивать, но нельзя уменьшать. Minimum: 33554432 bytes (32 MB)
+-- vinyl_memory - можно увеличивать, но нельзя уменьшать.
+
+-- Из статических количественных параметров есть ограничения:
+-- memtx_min_tuple_size - значение должно быть от 8 до 1 048 280 включительно.
+
+-- Мне кажется стоит уточнить вопрос, если он касается только параметров памяти.
+-- Страница https://www.tarantool.io/ru/doc/2.11/reference/reference_lua/box_cfg/ немного устарела
