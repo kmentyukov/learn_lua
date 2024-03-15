@@ -1,0 +1,20 @@
+Выполнить в консоли Tarantool следующий код:
+box.tuple:new({uuid = uuid.new(), firstname = 'Ivan', secondname = 'Ivanov', middlename = 'Ivanovich', age = 45})
+Объясните полученный результат.
+
+
+- error: '[string "return box.tuple:new({uuid = uuid.new(), firs..."]:1: attempt to
+    index global ''uuid'' (a nil value)'
+
+Не подключен модуль uuid. Если запустить через tarantool -l 'uuid', то выходит ошибка
+
+tarantool> box.tuple:new({uuid = uuid.new(), firstname = 'Ivan', secondname = 'Ivanov', middlename = 'Ivanovich', age = 45})
+---
+- error: unsupported Lua type 'function'
+...
+
+В функцию в качестве первого аргумента передается таблица tuple, в котором присутствуют функции в том числе.
+
+Правильный вариант
+box.tuple.new({uuid.new(), 'Ivan', 'Ivanov', 'Ivanovich', 45})
+

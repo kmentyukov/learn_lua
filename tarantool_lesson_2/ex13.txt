@@ -1,0 +1,48 @@
+Даны операции:
+    box.space.user.get({"user1"})
+    box.space.user:get("user1")
+    box.space.user:get{"user1"}
+    box.space.user:get("user1", nil)
+    box.space.user:get({"user", box.NULL})
+    box.space.user:get({"user1", nil})
+Добавить пользователя с таким логином (если его не было добавлено) 
+и проверить операции. В чём между ними разница?
+
+1. box.space.user.get({"user1"})
+    Ошибка - error: 'builtin/box/schema.lua:1872: Use space:get(...) instead of space.get(...)'
+    
+    В качестве первого аргумента должно быть имя спейса
+
+2. box.space.user:get("user1")
+    tarantool> box.space.users:get("user_1")
+    ---
+    - ['user_1', '2023-04-27T09:34:07Z', '2023-06-11T06:30:23Z', false]
+
+    Все работает
+
+3. Вопрос задублирован, но предположим, что box.space.user:get({"user1"})
+    tarantool> box.space.users:get({"user_1"})
+    ---
+    - ['user_1', '2023-04-27T09:34:07Z', '2023-06-11T06:30:23Z', false] 
+    
+    Все работает
+
+4. box.space.user:get("user1", nil)
+    tarantool> box.space.users:get("user_1", nil)
+    ---
+    - ['user_1', '2023-04-27T09:34:07Z', '2023-06-11T06:30:23Z', false]
+
+    Все работает, функция get ожидает только один аргумент, второй отбрасывает
+
+5. box.space.user:get({"user", box.NULL})
+    Ошибка - error: Invalid key part count in an exact match (expected 1, got 2)
+
+    Т.к. аргумент передан в виде Msg-pack, то возникает ошибка - количество частей ключа не совпадает.
+    box.NULL - специальная константа Тарантула, обознаяающая null, но им не являющаяся
+
+6.  box.space.user:get({"user1", nil})
+    ---
+    - ['user_1', '2023-04-27T09:34:07Z', '2023-06-11T06:30:23Z', false]
+
+    Все работает, nil в конце таблицы отбрасывается. 
+    Отдельный вопрос - почему длина {"user1", nil, 1} = 1, а {"user1", nil, nil, 1} = 4

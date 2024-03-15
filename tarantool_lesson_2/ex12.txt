@@ -1,0 +1,8 @@
+Что будет, если вставить уже существующий прибор?
+
+Ошибка:
+- error: 'Duplicate key exists in unique index "pk" in space "devices" with old tuple
+    - ["99:43:75:42:05:58", "model3", "", 4, "user_28", {"note": "Please, write something"}]
+    and new tuple - ["99:43:75:42:05:58", "model3", "", 4, "user_28", {"note": "Please,
+    write something"}]'
+...
